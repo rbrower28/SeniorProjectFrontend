@@ -1,29 +1,28 @@
 import './App.css';
-import { useState } from 'react';
 import Nav from "./components/Nav";
+import Footer from './components/Footer';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
 } from "react-router-dom";
-import Login from './pages/Login';
-import Graph from './pages/Graph';
-// import useToken from './components/useToken';
+import Auth from './pages/Auth';
+import Home from './pages/Home';
  
 function App() {
-  const [token, setToken] = useState();
+  const token = localStorage.getItem('token');
 
   if(!token) {
-    return <Login setToken={setToken} />
+    return <Auth />
   }
 
   return (
       <Router>
           <Nav />
           <Routes>
-              <Route exact path="/" element={<Login />} />
-              <Route path="/home" element={<Graph />} />
+              <Route path="/" element={<Home />} />
           </Routes>
+          <Footer />
       </Router>
   );
 }
