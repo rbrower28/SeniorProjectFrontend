@@ -40,11 +40,16 @@ export default function Entry({ props }) {
   }, [props]);
 
   async function sendData(data) {
-    await Axios.put("http://localhost:8080/scenario", data, {
-      headers: {
-        Authorization: localStorage.getItem("token"),
-      },
-    })
+    await Axios.put(
+      "https://seniorprojectbackend.onrender.com/scenario" ||
+        "http://localhost:8080/scenario",
+      data,
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    )
       .then((res) => {
         if (res.status === 201) {
           window.location.reload();

@@ -7,10 +7,14 @@ import { validateCredentials } from "../utils/validate";
 async function registerUser(email, password) {
   let respToken = null;
 
-  await Axios.post("http://localhost:8080/account", {
-    email: email,
-    password: password,
-  })
+  await Axios.post(
+    "https://seniorprojectbackend.onrender.com/account" ||
+      "http://localhost:8080/account",
+    {
+      email: email,
+      password: password,
+    }
+  )
     .then((res) => {
       if (res.status === 201) {
         respToken = res.data;
@@ -26,10 +30,14 @@ async function registerUser(email, password) {
 async function loginUser(email, password) {
   let respToken = null;
 
-  await Axios.post("http://localhost:8080/login", {
-    email: email,
-    password: password,
-  })
+  await Axios.post(
+    "https://seniorprojectbackend.onrender.com/login" ||
+      "http://localhost:8080/login",
+    {
+      email: email,
+      password: password,
+    }
+  )
     .then((res) => {
       console.log(res);
       if (res.status === 200) {
