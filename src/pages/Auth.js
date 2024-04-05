@@ -1,8 +1,8 @@
 import "./Auth.css";
 import React, { useState } from "react";
 import Axios from "axios";
-
-import validateCredentials from "../utils/validate";
+import logo from "../assets/logo-darkmode.png";
+import { validateCredentials } from "../utils/validate";
 
 async function registerUser(email, password) {
   let respToken = null;
@@ -62,6 +62,8 @@ export default function Auth() {
             if (token) {
               localStorage.setItem("token", token);
               window.location.reload();
+            } else {
+              errs.push("Account already exists.");
             }
           })
         : await loginUser(email, password).then((token) => {
@@ -87,6 +89,7 @@ export default function Auth() {
 
   return (
     <div className="auth">
+      <img className="loginlogo" src={logo} alt="Obsidian Finance Logo" />
       <form
         onSubmit={handleSubmit}
         className={formShake ? "shake" : ""}

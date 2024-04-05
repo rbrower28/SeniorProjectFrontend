@@ -1,7 +1,64 @@
 .entrybox {
   margin: 2rem auto;
-  height: 20rem;
-  width: 20rem;
-  background-color: whitesmoke;
-  border-radius: 1rem;
+  max-width: 46rem;
+}
+
+.formblocks {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.entrybox fieldset {
+  border: 3px solid var(--color-primary-500);
+  border-radius: 20px;
+  margin: 0;
+  padding: 0 0 1rem 0;
+  max-width: 30rem;
+}
+
+.entrybox fieldset h3 {
+  color: var(--color-gray-900);
+  background-color: var(--color-primary-500);
+  margin: 0;
+  padding: 1rem;
+  border-radius: 1rem 1rem 0 0;
+  border-bottom: 3px solid var(--color-primary-500);
+}
+
+/*.valid {
+  outline: 2px solid rgb(131, 230, 152);
+  border-radius: 3px;
+} */
+
+.valid:focus {
+  outline: 3px solid rgb(53, 211, 87);
+}
+
+.invalid {
+  outline: 2px solid rgb(236, 164, 164);
+  border-radius: 3px;
+}
+
+.invalid:focus {
+  outline: 3px solid rgb(214, 136, 136);
+}
+
+.entrybox label {
+  padding: 1rem 2rem 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  text-align: right;
+}
+
+.entrybox input {
+  margin-left: 1rem;
+  max-width: 10rem;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='30px' width='85px'><text x='2' y='22' fill='gray' font-size='16' font-family='arial'>$</text></svg>");
+  background-repeat: no-repeat;
+  padding-left: 1rem;
 }

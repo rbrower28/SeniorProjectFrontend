@@ -1,9 +1,10 @@
-import './Nav.css';
+import "./Nav.css";
 import { useEffect, useState } from "react";
 import Axios from "axios";
+import logo from "../assets/logo-darkmode.png";
 
 export default function Nav() {
-  const [user, setUser] = useState('');
+  const [user, setUser] = useState("");
 
   useEffect(() => {
     getAccount();
@@ -14,11 +15,13 @@ export default function Nav() {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-    }).then((resp) => {
-      setUser(resp.data);
-    }).catch((err) => {
-      console.log(err);
-    });
+    })
+      .then((resp) => {
+        setUser(resp.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const removeAuth = () => {
@@ -28,10 +31,13 @@ export default function Nav() {
 
   return (
     <div className="navbar">
-      <span>Hello, {user}</span>
-      <button className="link" onClick={removeAuth}>
-        Logout
-      </button>
+      <a href='/'><img className="logo" src={logo} alt="Obsidian Finance Logo" /></a>
+      <div className="links">
+        <span>Hello, {user}</span>
+        <button className="link" onClick={removeAuth}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 }

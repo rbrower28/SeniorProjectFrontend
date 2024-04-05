@@ -3,5 +3,18 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin: 1rem 2rem;
+  margin: 0;
+  padding: 0 1rem;
+}
+
+.navbar a {
+  line-height: 0;
+}
+
+.navbar .link {
+  margin-left: 1rem;;
+}
+
+.logo {
+  max-height: 5rem;
 }
