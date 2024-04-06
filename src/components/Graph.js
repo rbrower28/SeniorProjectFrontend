@@ -1,6 +1,9 @@
 import "./Graph.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
+import dlIcon from "../assets/download.svg";
+import { saveSvgAsPng } from 'save-svg-as-png';
+import * as chroma from 'chroma-js';
 
 const sampleKeys = ["groupA", "groupB", "groupC", "groupD", "groupE"];
 const sampleData = [
@@ -45,6 +48,7 @@ export default function Graph({ props }) {
   const [data, setData] = useState([]);
   const [keys, setKeys] = useState([]);
   const [max, setMax] = useState(0);
+  const [themeColor, setThemeColor] = useState("purple");
 
   const startAge = 55;
   const endAge = 99;
@@ -115,13 +119,27 @@ export default function Graph({ props }) {
   }, [max, props]);
 
   const MARGIN = { top: 30, right: 30, bottom: 50, left: 50 };
-  const width = 700;
+  const width = 825;
   const height = 400;
 
   // bounds = area inside the graph axis = calculated by substracting the margins
   const axesRef = useRef(null);
-  const boundsWidth = width - MARGIN.right - MARGIN.left;
+  const boundsWidth = width - MARGIN.right - MARGIN.left - 125;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
+
+  // color palette
+  var color_scale = chroma.scale([themeColor, 'white']);
+
+  var color = d3.scaleOrdinal()
+    .domain([keys])
+    .range([
+      color_scale(0.1).hex(),
+      color_scale(0.6).hex(),
+      color_scale(0.5).hex(),
+      color_scale(0.4).hex(),
+      color_scale(0.3).hex(),
+      color_scale(0.2).hex(),
+    ]);
 
   // Data Wrangling: stack the data
   const stackSeries = d3
@@ -161,10 +179,103 @@ export default function Graph({ props }) {
 
     const yAxisGenerator = d3.axisLeft(yScale);
     svgElement.append("g").call(yAxisGenerator);
-  }, [xScale, yScale, boundsHeight]);
+
+    //     // create a tooltip
+    //   var Tooltip = d3.select("#div_template")
+    //   .append("div")
+    //   .style("opacity", 0)
+    //   .attr("class", "tooltip")
+    //   .style("background-color", "white")
+    //   .style("border", "solid")
+    //   .style("border-width", "2px")
+    //   .style("border-radius", "5px")
+    //   .style("padding", "5px")
+
+    // // Three function that change the tooltip when user hover / move / leave a cell
+    // var mouseover = function(d) {
+    //   Tooltip
+    //     .style("opacity", 1)
+    //   d3.select(this)
+    //     .style("stroke", "black")
+    //     .style("opacity", 1)
+    // }
+    // var mousemove = function(d) {
+    //   Tooltip
+    //     .html("The exact value of<br>this cell is: " + d.value)
+    //     .style("left", (d3.pointer(this)[0]+70) + "px")
+    //     .style("top", (d3.pointer(this)[1]) + "px")
+    // }
+    // var mouseleave = function(d) {
+    //   Tooltip
+    //     .style("opacity", 0)
+    //   d3.select(this)
+    //     .style("stroke", "none")
+    //     .style("opacity", 0.8)
+    // }
+
+    // // add the squares
+    // svgElement.selectAll()
+    //   .data(data, function(d) {return d.group+':'+d.variable;})
+    //   .enter()
+    //   .append("rect")
+    //     .attr("x", function(d) { return xScale(d.group) })
+    //     .attr("y", function(d) { return yScale(d.variable) })
+    //     .attr("rx", 4)
+    //     .attr("ry", 4)
+    //     .attr("width", 100 )
+    //     .attr("height", 100 )
+    //     .style("fill", '#9a6fb0' )
+    //     .style("stroke-width", 4)
+    //     .style("stroke", "none")
+    //     .style("opacity", 0.8)
+    //   .on("mouseover", mouseover)
+    //   .on("mousemove", mousemove)
+    //   .on("mouseleave", mouseleave)
+
+    // What to do when one group is hovered
+    var highlight = function (d) {
+      console.log(d)
+      // reduce opacity of all groups
+      d3.selectAll(".myArea").style("opacity", .1)
+      // expect the one that is hovered
+      d3.select("." + d.srcElement.__data__).style("opacity", 1)
+    }
+
+    // And when it is not hovered anymore
+    var noHighlight = function (d) {
+      d3.selectAll(".myArea").style("opacity", 1)
+    }
 
 
+    // Add one dot in the legend for each name.
+    var size = 20
+    svgElement.selectAll("myrect")
+      .data(keys)
+      .enter()
+      .append("rect")
+      .attr("x", 650)
+      .attr("y", function (d, i) { return (10 + i * (size + 5)) + 150 }) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("width", size)
+      .attr("height", size)
+      .style("fill", function (d) { return color(d) })
+      .on("mouseover", highlight)
+      .on("mouseleave", noHighlight)
 
+    // Add one dot in the legend for each name.
+    svgElement.selectAll("mylabels")
+      .data(keys)
+      .enter()
+      .append("text")
+      .attr("x", 650 + size * 1.2)
+      .attr("y", function (d, i) { return (10 + i * (size + 5) + (size / 2)) + 150 }) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", function (d) { return color(d) })
+      .text(function (d) { return d })
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle")
+      .on("mouseover", highlight)
+      .on("mouseleave", noHighlight)
+
+  }, [xScale, yScale, boundsHeight, themeColor, color, keys]);
 
   // Build the line
   const areaBuilder = d3
@@ -183,16 +294,20 @@ export default function Graph({ props }) {
         d={path}
         opacity={1}
         stroke="none"
-        fill="#9a6fb0"
-        fillOpacity={i / 10 + 0.1}
+        fill={color(serie.key)}
+        class={"myArea " + serie.key}
       />
     );
   });
 
+  const downloadScenario = () => {
+    saveSvgAsPng(document.getElementById("diagram"), "scenario.png");
+  }
+
   return (
     <>
-      <div>
-        <svg width={width} height={height}>
+      <div className="graphwrapper">
+        <svg id="diagram" width={width} height={height}>
           <g
             width={boundsWidth}
             height={boundsHeight}
@@ -207,6 +322,16 @@ export default function Graph({ props }) {
             transform={`translate(${[MARGIN.left, MARGIN.top].join(",")})`}
           />
         </svg>
+        <div className="optionsrow">
+          <select className="colorpicker" onChange={(e) => setThemeColor(e.target.value)}>
+            <option value="purple">Purple</option>
+            <option value="orange">Orange</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+            <option value="red">Red</option>
+          </select>
+          <button className="link download" onClick={downloadScenario} ><img src={dlIcon} alt="Download" /></button>
+        </div>
       </div>
     </>
   );
