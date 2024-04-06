@@ -8,6 +8,8 @@ import {
   formatCommas,
 } from "../utils/validate";
 import Axios from "axios";
+import { config } from '../constants';
+const backendUrl = config.backendUrl;
 
 export default function Entry({ props }) {
   // INCOME
@@ -40,16 +42,11 @@ export default function Entry({ props }) {
   }, [props]);
 
   async function sendData(data) {
-    await Axios.put(
-      "https://seniorprojectbackend.onrender.com/scenario" ||
-        "http://localhost:8080/scenario",
-      data,
-      {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      }
-    )
+    await Axios.put(backendUrl + "scenario", data, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
       .then((res) => {
         if (res.status === 201) {
           window.location.reload();

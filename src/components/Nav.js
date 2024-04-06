@@ -2,6 +2,8 @@ import "./Nav.css";
 import { useEffect, useState } from "react";
 import Axios from "axios";
 import logo from "../assets/logo-darkmode.png";
+import { config } from '../constants';
+const backendUrl = config.backendUrl;
 
 export default function Nav() {
   const [user, setUser] = useState("");
@@ -11,15 +13,11 @@ export default function Nav() {
   }, []);
 
   const getAccount = async () => {
-    await Axios.get(
-      "https://seniorprojectbackend.onrender.com/account" ||
-        "http://localhost:8080/account",
-      {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      }
-    )
+    await Axios.get(backendUrl + "account", {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
       .then((resp) => {
         setUser(resp.data);
       })

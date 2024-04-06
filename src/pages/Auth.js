@@ -1,20 +1,18 @@
 import "./Auth.css";
+import logo from "../assets/logo-darkmode.png";
 import React, { useState } from "react";
 import Axios from "axios";
-import logo from "../assets/logo-darkmode.png";
 import { validateCredentials } from "../utils/validate";
+import { config } from '../constants';
+const backendUrl = config.backendUrl;
 
 async function registerUser(email, password) {
   let respToken = null;
 
-  await Axios.post(
-    "https://seniorprojectbackend.onrender.com/account" ||
-      "http://localhost:8080/account",
-    {
-      email: email,
-      password: password,
-    }
-  )
+  await Axios.post(backendUrl + "account", {
+    email: email,
+    password: password,
+  })
     .then((res) => {
       if (res.status === 201) {
         respToken = res.data;
@@ -30,14 +28,10 @@ async function registerUser(email, password) {
 async function loginUser(email, password) {
   let respToken = null;
 
-  await Axios.post(
-    "https://seniorprojectbackend.onrender.com/login" ||
-      "http://localhost:8080/login",
-    {
-      email: email,
-      password: password,
-    }
-  )
+  await Axios.post(backendUrl + "login", {
+    email: email,
+    password: password,
+  })
     .then((res) => {
       console.log(res);
       if (res.status === 200) {
@@ -67,21 +61,21 @@ export default function Auth() {
     if (errs.length === 0) {
       register
         ? await registerUser(email, password).then((token) => {
-            if (token) {
-              localStorage.setItem("token", token);
-              window.location.reload();
-            } else {
-              errs.push("Account already exists.");
-            }
-          })
+          if (token) {
+            localStorage.setItem("token", token);
+            window.location.reload();
+          } else {
+            errs.push("Account already exists.");
+          }
+        })
         : await loginUser(email, password).then((token) => {
-            if (token) {
-              localStorage.setItem("token", token);
-              window.location.reload();
-            } else {
-              errs.push("Username or password is incorrect.");
-            }
-          });
+          if (token) {
+            localStorage.setItem("token", token);
+            window.location.reload();
+          } else {
+            errs.push("Username or password is incorrect.");
+          }
+        });
     }
 
     if (errs.length > 0) {

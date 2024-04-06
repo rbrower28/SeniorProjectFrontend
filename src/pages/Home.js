@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import Graph from "../components/Graph";
 import Entry from "../components/Entry";
 import Axios from "axios";
+import { config } from '../constants';
+const backendUrl = config.backendUrl;
 
 export default function Home() {
   const [graphParams, setGraphParams] = useState({});
@@ -12,15 +14,11 @@ export default function Home() {
   }, []);
 
   async function getData() {
-    await Axios.get(
-      "https://seniorprojectbackend.onrender.com/scenario" ||
-        "http://localhost:8080/scenario",
-      {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      }
-    )
+    await Axios.get(backendUrl + "scenario", {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
       .then((res) => {
         if (res.status === 200) {
           res.data.populated = true;

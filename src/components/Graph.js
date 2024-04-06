@@ -163,6 +163,9 @@ export default function Graph({ props }) {
     svgElement.append("g").call(yAxisGenerator);
   }, [xScale, yScale, boundsHeight]);
 
+
+
+
   // Build the line
   const areaBuilder = d3
     .area()
